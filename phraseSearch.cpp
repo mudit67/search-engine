@@ -42,6 +42,7 @@ void printSearchResults(
   std::cout << "----------------------" << std::endl;
 }
 // TODO: Implement Missing words/tokens search
+// TODO: Search ranking.
 int searchNextToken(Posting &temp, std::string &nextToken, int lastToken) {
 
   auto tokenPosting = std::lower_bound(Index[nextToken].begin(),
@@ -60,26 +61,35 @@ int searchNextToken(Posting &temp, std::string &nextToken, int lastToken) {
 void searchInDoc(int docId, std::vector<std::string> &tokensToSearch,
                  searchResults &serRes) {
   Posting temp;
+  std::vector<const std::vector<int> *> PostingList;
   temp.docID = docId;
-  auto firstTokenPosting =
-      std::lower_bound(Index[tokensToSearch[0]].begin(),
-                       Index[tokensToSearch[0]].end(), temp, docIdComp);
-  if (firstTokenPosting == Index[tokensToSearch[0]].end()) {
-    std::cout << "First Token not found";
-    return;
+  for (int i = 0; i < tokensToSearch.size(); i++) {
+    auto it = std::lower_bound(Index[tokensToSearch[i]].begin(),
+                               Index[tokensToSearch[i]].end(), temp, docIdComp);
+    if (it == Index[tokensToSearch[i]].end() || it->docID != docId) {
+      return;
+    }
+
+    PostingList.push_back(&it->positions);
   }
-  int tokenIdx = 0;
-  for (int i = 0; i < firstTokenPosting->positions.size(); i++) {
-    int lastIdx = firstTokenPosting->positions[i];
-    std::vector<int> idxArray{lastIdx};
-    for (int j = 1; j < tokensToSearch.size(); j++) {
-      lastIdx = searchNextToken(temp, tokensToSearch[j], lastIdx);
-      if (lastIdx == -1) {
+  if (PostingList.empty())
+    return;
+
+  std::vector<int> currentMatch;
+
+  for (int i = 0; i < PostingList[0]->size(); i++) {
+    int lastIdx = (*PostingList[0])[i];
+    currentMatch.push_back(lastIdx);
+    for (int j = 1; j < PostingList.size(); j++) {
+      auto tokenIt = std::lower_bound(PostingList[j]->begin(),
+                                      PostingList[j]->end(), lastIdx + 1);
+      if (tokenIt == PostingList[j]->end()) {
         return;
       }
-      idxArray.push_back(lastIdx);
+      currentMatch.push_back(*tokenIt);
     }
-    serRes[docId].push_back(idxArray);
+    serRes[docId].push_back(currentMatch);
+    currentMatch.clear();
   }
 }
 bool phraseSearch(std::vector<std::string> &tokensToSearch) {
