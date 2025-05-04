@@ -1,5 +1,6 @@
 #include "./bin/tokenDump.cpp"
 #include <algorithm>
+#include <iostream>
 #include <ostream>
 #include <set> // Using set temporarily within the value can simplify uniqueness handling
 #include <string>
@@ -28,10 +29,11 @@ void printIndex(const InvertedIndex &index, const DocumentMapping &docMapping) {
         std::cout << ", ";
       std::cout << idFreqPair.positions.size() << " : ";
       for (int i = 0; i < idFreqPair.positions.size(); i++)
-        std::cout << idFreqPair.positions[i]<<" "; 
+        std::cout << idFreqPair.positions[i] << " ";
       // Optionally print the filename too:
       if (idFreqPair.docID >= 0 && idFreqPair.docID < docMapping.size()) {
-        std::cout << " (" << docMapping[idFreqPair.docID] << ")"; // Print doc ID
+        std::cout << " (" << docMapping[idFreqPair.docID]
+                  << ")"; // Print doc ID
       }
       first = false;
     }
@@ -60,9 +62,7 @@ void insert_sorted(std::vector<Posting> &vec, Posting element,
   vec.insert(iter, element);
 }
 
-int main() {
-  DocumentMapping DocMap;
-  InvertedIndex Index;
+void buildIndex(DocumentMapping &DocMap, InvertedIndex &Index) {
 
   for (int i = 0; i < processedDocuments.size(); i++) {
 
@@ -85,4 +85,5 @@ int main() {
   }
   std::cout << "Index Built!" << std::endl;
   printIndex(Index, DocMap);
+  // return Index;
 }
