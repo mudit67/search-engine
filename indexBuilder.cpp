@@ -7,7 +7,8 @@
 #include <vector>
 struct Posting {
   int docID;
-  int frequency;
+  // int frequency;
+  std::vector<int> positions;
 };
 // Type alias for our main index structure
 // Token as the Key and the <DocumentID,Frequency> as the value.
@@ -25,11 +26,12 @@ void printIndex(const InvertedIndex &index, const DocumentMapping &docMapping) {
     for (const auto &idFreqPair : pair.second) {
       if (!first)
         std::cout << ", ";
-      std::cout << idFreqPair.docID << " : "
-                << idFreqPair.frequency; // Print doc ID
+      std::cout << idFreqPair.positions.size() << " : ";
+      for (int i = 0; i < idFreqPair.positions.size(); i++)
+        std::cout << idFreqPair.positions[i]<<" "; 
       // Optionally print the filename too:
       if (idFreqPair.docID >= 0 && idFreqPair.docID < docMapping.size()) {
-        std::cout << " (" << docMapping[idFreqPair.docID] << ")";
+        std::cout << " (" << docMapping[idFreqPair.docID] << ")"; // Print doc ID
       }
       first = false;
     }
@@ -63,16 +65,21 @@ int main() {
   InvertedIndex Index;
 
   for (int i = 0; i < processedDocuments.size(); i++) {
+
     DocMap.push_back(processedDocuments[i].id);
+
     for (int j = 0; j < processedDocuments[i].tokens.size(); j++) {
+
       std::string token = processedDocuments[i].tokens[j];
       auto docIdIter = searchDocId(Index[token], i);
-      if (docIdIter == Index[token].end() || docIdIter->docID != i) {
+
+      if (docIdIter == Index[token].end() ||
+          (docIdIter != Index[token].end() && docIdIter->docID != i)) {
         // Index[token].push_back({i, 1});
-        insert_sorted(Index[token], {i, 1}, docIdIter);
+        insert_sorted(Index[token], {i, std::vector<int>{j}}, docIdIter);
       } else {
         // Index[token][docIdIter].frequency++;
-        docIdIter->frequency++;
+        docIdIter->positions.push_back(j);
       }
     }
   }
