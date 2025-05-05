@@ -2,15 +2,15 @@
 #define PDF_PROCESSING_H
 
 #include <string>
+#include <vector>
 #include <filesystem>
-#include <stdexcept>
-#include <vector> // Include vector for returning page strings
-
-namespace fs = std::filesystem;
 
 namespace pdf_processing {
-    // Modified function to return a vector of page texts
-    std::vector<std::string> extract_text_from_pdf(const fs::path& pdf_path);
-} // namespace pdf_processing
+    // Extracts and returns text (per-page) from a single PDF file
+    std::vector<std::string> extract_text_from_pdf(const std::filesystem::path& pdf_path);
+
+    // Extracts all PDFs in a folder and returns a vector of vector<string> (all pages)
+    std::vector<std::vector<std::string>> extract_texts_from_folder(const std::filesystem::path& folder_path);
+}
 
 #endif
