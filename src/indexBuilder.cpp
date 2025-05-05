@@ -1,4 +1,6 @@
-#include "./bin/tokenDump.cpp"
+#include "../bin/tokenDump.cpp"
+#include "../include/dataStructures.h"
+#include "./termRank.cpp"
 #include <algorithm>
 #include <iostream>
 #include <ostream>
@@ -6,18 +8,10 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-struct Posting {
-  int docID;
-  // int frequency;
-  std::vector<int> positions;
-};
-// Type alias for our main index structure
-// Token as the Key and the <DocumentID,Frequency> as the value.
-using InvertedIndex = std::unordered_map<std::string, std::vector<Posting>>;
 
-// Type alias for mapping document IDs back to their original identifiers (e.g.,
-// filenames)
-using DocumentMapping = std::vector<std::string>;
+extern InvertedIndex Index;
+extern DocumentMapping DocMap;
+extern termDocTable TfIdf;
 
 void printIndex(const InvertedIndex &index, const DocumentMapping &docMapping) {
   std::cout << "--- Inverted Index ---" << std::endl;
@@ -85,5 +79,6 @@ void buildIndex(DocumentMapping &DocMap, InvertedIndex &Index) {
   }
   std::cout << "Index Built!" << std::endl;
   printIndex(Index, DocMap);
+  buildTfIDF();
   // return Index;
 }

@@ -1,10 +1,12 @@
-// #include <vector>
-// #include <string>
-#include "./indexBuilder.cpp"
+#include "../include/dataStructures.h"
 #include <algorithm>
-InvertedIndex Index;
-DocumentMapping DocMap;
-using searchResults = std::unordered_map<int, std::vector<std::vector<int>>>;
+#include <bits/stl_numeric.h>
+#define searchTopNDocs 3
+// #include "./termRank.cpp"
+
+extern InvertedIndex Index;
+extern DocumentMapping DocMap;
+extern termDocTable TfIdf;
 
 bool docIdComp(const Posting &a, const Posting &b) {
   return (a.docID < b.docID);
@@ -93,13 +95,24 @@ void searchInDoc(int docId, std::vector<std::string> &tokensToSearch,
   }
 }
 bool phraseSearch(std::vector<std::string> &tokensToSearch) {
-  buildIndex(DocMap, Index);
   // for (int i = 0; i < tokensToSearch.size(); i++) {
   //   posts.push_back()
   // }
+  std::vector<int> docScore(DocMap.size(), 0);
+  for (auto token : tokensToSearch) {
+    for (int i = 0; i < DocMap.size(); i++) {
+      docScore[i] += TfIdf[{token, i}];
+    }
+  }
+  std::vector<int> sortedDocs(DocMap.size());
+  std::iota(sortedDocs.begin(), sortedDocs.end(), 0);
+
+  std::sort(sortedDocs.begin(), sortedDocs.end(),
+            [&docScore](int a, int b) { return docScore[a] > docScore[b]; });
+
   searchResults serRes;
-  for (int i = 0; i < DocMap.size(); i++) {
-    searchInDoc(i, tokensToSearch, serRes);
+  for (int i = 0; i < searchTopNDocs; i++) {
+    searchInDoc(sortedDocs[i], tokensToSearch, serRes);
   }
   printSearchResults(serRes);
   return false;
