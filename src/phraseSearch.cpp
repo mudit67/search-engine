@@ -6,7 +6,7 @@
 #include <vector>
 
 #define SEARCH_TOP_N_DOCS 3
-#define PROXIMITY_THRESHOLD 2000 // Adjust as needed
+#define PROXIMITY_THRESHOLD 100 // Adjust as needed
 
 extern InvertedIndex Index;
 extern DocumentMapping DocMap;
@@ -33,8 +33,9 @@ bool areAdjacent(const BoundingBox &bbox1, const BoundingBox &bbox2,
   bool verticalProximity =
       std::abs(bbox1.top - bbox2.bottom) < verticalProximityThreshold ||
       std::abs(bbox2.top - bbox1.bottom) < verticalProximityThreshold;
-  std::cout << horizontal << " " << verticalOverlap << " " << verticalProximity
-            << std::endl;
+  // std::cout << horizontal << " " << verticalOverlap << " " <<
+  // verticalProximity
+  //           << std::endl;
   return horizontal && (verticalOverlap || verticalProximity);
 }
 // Function to search for a phrase in a specific document, considering proximity
@@ -42,11 +43,11 @@ void searchInDocWithProximity(
     int docId, const std::vector<std::string> &tokensToSearch,
     std::vector<int> &docResults, // Store only token indices
     double proximityThreshold, int tokenDistanceThreshold) {
-  std::cout << "Searching document ID: " << docId << " for tokens: ";
-  for (const auto &token : tokensToSearch) {
-    std::cout << "\"" << token << "\" ";
-  }
-  std::cout << std::endl;
+  // std::cout << "Searching document ID: " << docId << " for tokens: ";
+  // for (const auto &token : tokensToSearch) {
+  //   std::cout << "\"" << token << "\" ";
+  // }
+  // std::cout << std::endl;
 
   std::vector<const std::vector<PositionInfo> *> termPositions;
   Posting temp;
@@ -61,8 +62,8 @@ void searchInDocWithProximity(
                 << std::endl;
       return;
     }
-    std::cout << "  Token \"" << token << "\" found in document " << docId
-              << std::endl;
+    // std::cout << "  Token \"" << token << "\" found in document " << docId
+    //           << std::endl;
     termPositions.push_back(&it->positions);
   }
 
@@ -70,13 +71,13 @@ void searchInDocWithProximity(
     for (const auto &posInfo : *termPositions[0]) {
       docResults.push_back(posInfo.tokenIndex);
     }
-    if (!docResults.empty()) {
-      std::cout << "  Single term found at indices: ";
-      for (int index : docResults) {
-        std::cout << index << " ";
-      }
-      std::cout << std::endl;
-    }
+    // if (!docResults.empty()) {
+    //   std::cout << "  Single term found at indices: ";
+    //   for (int index : docResults) {
+    //     std::cout << index << " ";
+    //   }
+    //   std::cout << std::endl;
+    // }
     return;
   }
 
@@ -87,11 +88,11 @@ void searchInDocWithProximity(
         if (termIndex == tokensToSearch.size()) {
           docResults.insert(docResults.end(), currentMatchIndices.begin(),
                             currentMatchIndices.end()); // Store token indices
-          std::cout << "  Phrase found at token indices: ";
-          for (int index : currentMatchIndices) {
-            std::cout << index << " ";
-          }
-          std::cout << " on page " << lastPageNumber << std::endl;
+          // std::cout << "  Phrase found at token indices: ";
+          // for (int index : currentMatchIndices) {
+          //   std::cout << index << " ";
+          // }
+          // std::cout << " on page " << lastPageNumber << std::endl;
           return;
         }
 
@@ -172,7 +173,7 @@ bool phraseSearch(std::vector<std::string> &tokensToSearch) {
   for (int i = 0; i < DocMap.size(); ++i) {
     std::vector<int> docResults; // Store token indices for the current document
     searchInDocWithProximity(i, tokensToSearch, docResults, PROXIMITY_THRESHOLD,
-                             25); // Store results in docResults
+                             30); // Store results in docResults
     if (!docResults.empty()) {
       searchResults[i] = docResults; // Add to overall results if found
     }

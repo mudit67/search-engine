@@ -25,21 +25,43 @@ size_t getInvertedIndexSize(const InvertedIndex &index) {
   return totalSize;
 }
 int main() {
-
-  // std::vector<std::string> pdfPaths{"./bin/btee.pdf"};
-  std::vector<std::string> pdfPaths = getAllPdfFiles();
-  for (auto pdfPath : pdfPaths) {
-    std::cout << "Indexing: " << pdfPath << std::endl;
+  // std::vector<std::string> pdfFiles = getAllPdfFiles("./bin");
+  std::vector<std::string> pdfFiles{"./bin/thinkpython2.pdf"};
+  for (const auto &pdfPath : pdfFiles) {
+    std::cout << "Processing PDF: " << pdfPath << std::endl;
     processPdfAndBuildIndex(pdfPath);
   }
-  // printIndex();
 
-  std::vector<std::string> tkts{"data", "applications"};
-  phraseSearch(tkts);
-  // std::cout << "InvertedIndex: " << getInvertedIndexSize(Index) << std::endl;
-  // std::cout << "DocumentMapping: " << sizeof(DocMap) << std::endl;
-  // std::cout << "TermDocTable: " << sizeof(TfIdf) << std::endl;
-  int c;
-  std::cin >> c;
+  std::string query;
+  std::cout
+      << "Enter your search query (space-separated words, or -1 to exit): ";
+
+  while (std::getline(std::cin, query) && query != "-1") {
+    std::istringstream iss(query);
+    std::vector<std::string> tokensToSearch;
+    std::string token;
+    while (iss >> token) {
+      token.erase(std::remove_if(token.begin(), token.end(), ispunct),
+                  token.end());
+      std::transform(token.begin(), token.end(), token.begin(), ::tolower);
+      tokensToSearch.push_back(token);
+    }
+
+    if (!tokensToSearch.empty()) {
+      std::cout << "Searching for: ";
+      for (const auto &t : tokensToSearch) {
+        std::cout << "\"" << t << "\" ";
+      }
+      std::cout << std::endl;
+      phraseSearch(tokensToSearch);
+    } else {
+      std::cout << "No search query entered." << std::endl;
+    }
+
+    std::cout << "\nEnter your next search query (space-separated words, or -1 "
+                 "to exit): ";
+  }
+
+  std::cout << "Exiting search." << std::endl;
   return 0;
 }
