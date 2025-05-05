@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include/poppler/cpp/**"
+            ],
+            "defines": [],
+            "compilerPath": "/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "linux-clang-x64",
+            "compilerArgs": [
+                "pkg-config --cflags --libs poppler/cpp"
+            ]
+        }
+    ],
+    "version": 4
+}
