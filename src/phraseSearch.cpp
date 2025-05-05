@@ -43,12 +43,6 @@ void searchInDocWithProximity(
     int docId, const std::vector<std::string> &tokensToSearch,
     std::vector<int> &docResults, // Store only token indices
     double proximityThreshold, int tokenDistanceThreshold) {
-  // std::cout << "Searching document ID: " << docId << " for tokens: ";
-  // for (const auto &token : tokensToSearch) {
-  //   std::cout << "\"" << token << "\" ";
-  // }
-  // std::cout << std::endl;
-
   std::vector<const std::vector<PositionInfo> *> termPositions;
   Posting temp;
   temp.docID = docId;
@@ -62,8 +56,6 @@ void searchInDocWithProximity(
                 << std::endl;
       return;
     }
-    // std::cout << "  Token \"" << token << "\" found in document " << docId
-    //           << std::endl;
     termPositions.push_back(&it->positions);
   }
 
@@ -71,13 +63,6 @@ void searchInDocWithProximity(
     for (const auto &posInfo : *termPositions[0]) {
       docResults.push_back(posInfo.tokenIndex);
     }
-    // if (!docResults.empty()) {
-    //   std::cout << "  Single term found at indices: ";
-    //   for (int index : docResults) {
-    //     std::cout << index << " ";
-    //   }
-    //   std::cout << std::endl;
-    // }
     return;
   }
 
@@ -88,11 +73,6 @@ void searchInDocWithProximity(
         if (termIndex == tokensToSearch.size()) {
           docResults.insert(docResults.end(), currentMatchIndices.begin(),
                             currentMatchIndices.end()); // Store token indices
-          // std::cout << "  Phrase found at token indices: ";
-          // for (int index : currentMatchIndices) {
-          //   std::cout << index << " ";
-          // }
-          // std::cout << " on page " << lastPageNumber << std::endl;
           return;
         }
 
@@ -143,13 +123,14 @@ void printSearchResults(
       std::cout << tokenIndex << " ";
 
       // Find the page number for this tokenIndex
-      std::cout << "searching page of: " << queryTokens[0] << std::endl;
+      // std::cout << "searching page of: " << queryTokens[0] << std::endl;
       for (const auto &posting : Index.at(queryTokens[0])) {
-        std::cout << "searching page of: " << queryTokens[0] << std::endl;
+        // std::cout << "searching page of: " << queryTokens[0] << std::endl;
         if (posting.docID == docId) {
           for (const auto &posInfo : posting.positions) {
             if (posInfo.tokenIndex == tokenIndex) {
-              std::cout << " (Page: " << posInfo.pageNumber << ") ";
+              std::cout << " (Page: " << posInfo.pageNumber << ") "
+                        << std::endl;
               break;
             }
           }

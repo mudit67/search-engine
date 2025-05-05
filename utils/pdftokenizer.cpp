@@ -3,10 +3,6 @@
 #include <iostream>
 #include <locale>
 #include <memory> // For std::unique_ptr
-// #include <poppler/cpp/poppler-document.h>
-// #include <poppler/cpp/poppler-global.h>
-// #include <poppler/cpp/poppler-page-renderer.h>
-// #include <poppler/cpp/poppler-page.h>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -61,35 +57,6 @@ std::stringstream tokenizeText(const std::string &pageText) {
 
   return tokenStream;
 }
-
-// std::stringstream pdfTokenStream(const std::string &pdfPath) {
-//   std::unique_ptr<poppler::document> doc(
-//       poppler::document::load_from_file(pdfPath));
-//   if (doc) {
-//     int num_pages = doc->pages();
-//     for (int i = 0; i < num_pages; ++i) {
-//       std::unique_ptr<poppler::page> page(doc->create_page(i));
-//       if (page) {
-//         try {
-//           std::string text = page->text().to_latin1();
-//           std::cout << "Page " << i + 1 << " text extracted (" <<
-//           text.length()
-//                     << " bytes)." << std::endl;
-//           std::stringstream pageTokens = tokenizeText(text); // Comment out
-//         } catch (const std::bad_cast &e) {
-//           std::cerr << "Error on page " << i + 1 << ": " << e.what()
-//                     << std::endl;
-//           return 1; // Exit on error for now
-//         } catch (...) {
-//           std::cerr << "An unknown error occurred on page " << i + 1
-//                     << std::endl;
-//           return 1;
-//         }
-//       }
-//     }
-//   }
-// }
-
 poppler::rectf unionRect(const poppler::rectf &r1, const poppler::rectf &r2) {
   if (r1.is_empty())
     return r2;

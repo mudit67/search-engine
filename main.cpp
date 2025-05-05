@@ -25,8 +25,8 @@ size_t getInvertedIndexSize(const InvertedIndex &index) {
   return totalSize;
 }
 int main() {
-  // std::vector<std::string> pdfFiles = getAllPdfFiles("./bin");
-  std::vector<std::string> pdfFiles{"./bin/thinkpython2.pdf"};
+  std::vector<std::string> pdfFiles = getAllPdfFiles("./bin");
+  // std::vector<std::string> pdfFiles{"./bin/thinkpython2.pdf"};
   for (const auto &pdfPath : pdfFiles) {
     std::cout << "Processing PDF: " << pdfPath << std::endl;
     processPdfAndBuildIndex(pdfPath);
