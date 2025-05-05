@@ -1,5 +1,5 @@
-#include "./src/indexBuilder.cpp" 
-#include "./src/phraseSearch.cpp" 
+#include "./src/indexBuilder.cpp"
+#include "./src/phraseSearch.cpp"
 #include "include/dataStructures.h"
 InvertedIndex Index;
 DocumentMapping DocMap;
@@ -27,8 +27,10 @@ int main() {
   std::vector<std::string> pdfPaths{"./bin/btee.pdf"};
   for (auto pdfPath : pdfPaths)
     processPdfAndBuildIndex(pdfPath);
-  // std::vector<std::string> tkts{"a"};
-  // phraseSearch(tkts);
+  // printIndex();
+
+  std::vector<std::string> tkts{"renaming", "correct"};
+  phraseSearch(tkts);
   // std::cout << "InvertedIndex: " << getInvertedIndexSize(Index) << std::endl;
   // std::cout << "DocumentMapping: " << sizeof(DocMap) << std::endl;
   // std::cout << "TermDocTable: " << sizeof(TfIdf) << std::endl;
