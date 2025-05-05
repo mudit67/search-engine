@@ -1,2 +1,9 @@
 bin/
 executables/
+*.out
+*.o
+*.obj
+*.exe
+*.a
+*.so
+
