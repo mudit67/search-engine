@@ -5,6 +5,7 @@
 InvertedIndex Index;
 DocumentMapping DocMap;
 termDocTable TfIdf;
+
 size_t getInvertedIndexSize(const InvertedIndex &index) {
   size_t totalSize = 0;
   for (const auto &pair : index) {
@@ -24,9 +25,12 @@ size_t getInvertedIndexSize(const InvertedIndex &index) {
   }
   return totalSize;
 }
+
 int main() {
+  
+  // Fetch Pdf File paths
   std::vector<std::string> pdfFiles = getAllPdfFiles("./bin");
-  // std::vector<std::string> pdfFiles{"./bin/thinkpython2.pdf"};
+  
   for (const auto &pdfPath : pdfFiles) {
     std::cout << "Processing PDF: " << pdfPath << std::endl;
     processPdfAndBuildIndex(pdfPath);
@@ -36,6 +40,7 @@ int main() {
   std::cout
       << "Enter your search query (space-separated words, or -1 to exit): ";
 
+  // Handle Continous Quering
   while (std::getline(std::cin, query) && query != "-1") {
     std::istringstream iss(query);
     std::vector<std::string> tokensToSearch;

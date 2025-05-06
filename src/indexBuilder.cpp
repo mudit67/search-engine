@@ -7,18 +7,19 @@ extern InvertedIndex Index;
 extern DocumentMapping DocMap;
 extern termDocTable TfIdf;
 
-void insert_sorted(std::vector<Posting> &vec, Posting element,
-                   std::vector<Posting>::iterator iter) {
-  vec.insert(iter, element);
-}
 void processPdfAndBuildIndex(const std::string &pdfPath) {
+
   std::unique_ptr<poppler::document> doc = openPdfDocument(pdfPath);
+
   if (doc) {
+
     int docId = DocMap.size();
     DocMap.push_back(pdfPath);
 
     for (int pageNum = 0; pageNum < doc->pages(); ++pageNum) {
+
       auto pageTokensWithPositions = getTokenInfosForPage(doc.get(), pageNum);
+
       for (size_t tokenIndex = 0; tokenIndex < pageTokensWithPositions.size();
            ++tokenIndex) {
         const auto &tokenInfo = pageTokensWithPositions[tokenIndex];

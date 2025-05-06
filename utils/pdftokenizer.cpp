@@ -72,10 +72,14 @@ poppler::rectf unionRect(const poppler::rectf &r1, const poppler::rectf &r2) {
 std::vector<TokenInfo> getTokenInfosForPage(poppler::document *doc,
                                             int pageNumber) {
   std::vector<TokenInfo> tokensWithPositions;
+
   if (doc) {
+  
     if (pageNumber >= 0 && pageNumber < doc->pages()) {
+  
       std::unique_ptr<poppler::page> page(doc->create_page(pageNumber));
       if (page) {
+  
         std::vector<poppler::text_box> text_list = page->text_list();
         std::locale loc;
         std::string currentToken;
@@ -83,8 +87,10 @@ std::vector<TokenInfo> getTokenInfosForPage(poppler::document *doc,
         bool firstCharInToken = true;
 
         for (const auto &box : text_list) {
-          std::string text = box.text().to_latin1(); // Or .to_utf8()
+          std::string text = box.text().to_latin1();
+          
           for (char c : text) {
+          
             if (std::isspace(c, loc)) {
               if (!currentToken.empty()) {
                 std::transform(currentToken.begin(), currentToken.end(),
@@ -96,7 +102,9 @@ std::vector<TokenInfo> getTokenInfosForPage(poppler::document *doc,
                 currentBoundingBox = poppler::rectf();
                 firstCharInToken = true;
               }
-            } else if (std::ispunct(c, loc)) {
+            } 
+            
+            else if (std::ispunct(c, loc)) {
               if (!currentToken.empty()) {
                 std::transform(currentToken.begin(), currentToken.end(),
                                currentToken.begin(), ::tolower);
@@ -106,9 +114,6 @@ std::vector<TokenInfo> getTokenInfosForPage(poppler::document *doc,
                 currentBoundingBox = poppler::rectf();
                 firstCharInToken = true;
               }
-              // Optionally treat punctuation as a separate token with its own
-              // bbox tokensWithPositions.push_back({std::string(1, c),
-              // box.bbox()});
 
             } else {
               currentToken += c;
@@ -144,29 +149,6 @@ std::vector<TokenInfo> getTokenInfosForPage(poppler::document *doc,
     std::cerr << "Error: Document is not loaded." << std::endl;
   }
   return tokensWithPositions;
-}
-
-// Processes a single page and returns a stream of tokens for that page
-std::stringstream getPageTokens(poppler::document *doc, int pageNumber) {
-  std::stringstream pageTokenStream;
-  if (doc) {
-    if (pageNumber >= 0 && pageNumber < doc->pages()) {
-      std::unique_ptr<poppler::page> page(doc->create_page(pageNumber));
-      if (page) {
-        std::string pageText = page->text().to_latin1();
-        pageTokenStream << tokenizeText(pageText).rdbuf();
-      } else {
-        std::cerr << "Error: Could not create page " << pageNumber + 1
-                  << std::endl;
-      }
-    } else {
-      std::cerr << "Error: Invalid page number: " << pageNumber + 1
-                << std::endl;
-    }
-  } else {
-    std::cerr << "Error: Document is not loaded." << std::endl;
-  }
-  return pageTokenStream;
 }
 
 // Function to open the PDF document
