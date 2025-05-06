@@ -27,14 +27,20 @@ size_t getInvertedIndexSize(const InvertedIndex &index) {
 }
 
 int main() {
-  
+
   // Fetch Pdf File paths
-  std::vector<std::string> pdfFiles = getAllPdfFiles("./bin");
-  
+  // std::vector<std::string> pdfFiles = getAllPdfFiles("./bin");
+  std::vector<std::string> pdfFiles{"./bin/snc.pdf"};
+
   for (const auto &pdfPath : pdfFiles) {
     std::cout << "Processing PDF: " << pdfPath << std::endl;
     processPdfAndBuildIndex(pdfPath);
   }
+
+  // Build the TF-IDF index AFTER processing all documents
+  std::cout << "Building TF-IDF Index..." << std::endl;
+  buildTfIDF();
+  std::cout << "TF-IDF Index Built." << std::endl;
 
   std::string query;
   std::cout

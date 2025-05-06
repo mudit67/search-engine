@@ -149,14 +149,32 @@ bool phraseSearch(std::vector<std::string> &tokensToSearch) {
     return false;
   }
 
-  std::unordered_map<int, std::vector<int>>
-      searchResults; // Store only token indices
-  for (int i = 0; i < DocMap.size(); ++i) {
-    std::vector<int> docResults; // Store token indices for the current document
-    searchInDocWithProximity(i, tokensToSearch, docResults, PROXIMITY_THRESHOLD,
-                             30); // Store results in docResults
+  std::vector<std::pair<double, int>> docScores;
+  for (size_t i = 0; i < DocMap.size(); ++i) {
+    double score = 0.0;
+    for (const auto &token : tokensToSearch) {
+      if (TfIdf.count({token, static_cast<int>(i)})) {
+        score += TfIdf[{token, static_cast<int>(i)}];
+      }
+    }
+    docScores.push_back({score, static_cast<int>(i)});
+  }
+
+  std::sort(docScores.rbegin(), docScores.rend());
+
+  std::unordered_map<int, std::vector<int>> searchResults;
+  for (const auto &docScorePair : docScores) {
+    if (searchResults.size() >= SEARCH_TOP_N_DOCS && SEARCH_TOP_N_DOCS > 0) {
+      break;
+    }
+    std::vector<int> docResults; // Results for the current document
+    searchInDocWithProximity(docScorePair.second, tokensToSearch, docResults,
+                             PROXIMITY_THRESHOLD, 30);
     if (!docResults.empty()) {
-      searchResults[i] = docResults; // Add to overall results if found
+      searchResults[docScorePair.second] = docResults;
+    }
+    if (docScorePair.first == 0.0 && searchResults.empty()) {
+      break; // No more relevant documents
     }
   }
 
