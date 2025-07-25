@@ -40,7 +40,7 @@ A high-performance PDF Search Engine that parses and indexes PDF files for effic
 ---
 
 ## 📁 Project Structure
-
+```
 Search-engine/
 ├── include/ # Header files
 ├── assets/ # Usable files
@@ -52,7 +52,7 @@ Search-engine/
 │ └── main.cpp # Entry point
 ├── tests/ # Unit and integration tests
 └── README.md
-
+```
 ### Clone the Repository
 ```bash
 git clone https://github.com/mudit67/search-engine.git
